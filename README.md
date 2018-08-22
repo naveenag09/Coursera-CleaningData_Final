@@ -7,3 +7,20 @@ One of the most exciting areas in all of data science right now is wearable comp
 
 # Original Data
 https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip
+
+
+# Requirements 
+You should create one R script called run_analysis.R that does the following.
+
+Merges the training and the test sets to create one data set.
+Extracts only the measurements on the mean and standard deviation for each measurement.
+Uses descriptive activity names to name the activities in the data set
+Appropriately labels the data set with descriptive variable names.
+From the data set in step 4, creates a second, independent tidy data set with the average of each variable for each activity and each subject.
+
+# Steps taken for the project
+1. Download the zip file and extract / unzip the file. Please note this process is required only once, once downloaded the files can be read directly from the default working directory
+2. Read acitivity labels and features file so as to determine the list of required features
+3. Load test and train dataset and sub activity and subjects file in order to have combined one file which includes train, train-activities, train-subject, test, test-activitiies and test-subject
+4. Convert data type of activities and subjects from character to factors so as to not have repeat entries for unique description
+5. Transpose data (col to rows and row to columns) and export the final results (avg. of each variable for each subject and activity pair) to "tidy.txt"
