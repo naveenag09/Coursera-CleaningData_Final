@@ -5,15 +5,21 @@ library(tidyverse)
 library(data.table)
 library(readxl)
 
+## Step.1 - Download Data
+{
 filename <- "getdata_dataset.zip"
 
 ## Download zip data 
-  filelocation <- "https://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip "
+  filelocation <- "http://d396qusza40orc.cloudfront.net/getdata%2Fprojectfiles%2FUCI%20HAR%20Dataset.zip"
   download.file(filelocation, filename, method="curl")
 
 ## extract file from zip files    
   unzip(filename) 
- 
+}
+
+## Step.2 - Read raw files and extract list of features required
+
+{
   ## Onboard activity labels file
   activitylabels <- read.table("UCI HAR Dataset/activity_labels.txt")
   activitylabels[,2] <- as.character(activitylabels[,2])
@@ -21,16 +27,17 @@ filename <- "getdata_dataset.zip"
   ## Onboard features file
   features <- read.table("UCI HAR Dataset/features.txt")
   features[,2] <- as.character(features[,2])
-  
+
+
   # Determine variables which need to be extrated  
   required_features <- grep(".*mean.*|.*std.*", features[,2])
   required_features_names <- features[required_features,2]
   required_features_names = gsub('-mean', 'Mean', required_features_names)
   required_features_names = gsub('-std', 'Std', required_features_names)
   required_features_names <- gsub('[-()]', '', required_features_names)
-  
+}
    
-#1. Merges the training and the test sets to create one data set.
+## Step.3. Merges the training and the test sets to create one data set.
   {
   ## Load test and train dataset and combine
   train <- read.table("UCI HAR Dataset/train/X_train.txt")
@@ -50,12 +57,17 @@ filename <- "getdata_dataset.zip"
   colnames(combined_data) <- c("subject", "activity", required_features_names)
   }
   
-  ## convert activities & subjects into factors
+## Step.4. convert activities & subjects into factors
+{
   combined_data$activity <- factor(combined_data$activity, levels = activitylabels[,1], 
                                    labels = activitylabels[,2])
   combined_data$subject <- as.factor(combined_data$subject)
-  
+}
+
+## Step 5. Transpose and export final data
+{
   combined_data_melted <- melt(combined_data, id = c("subject", "activity"))
   combined_data_mean <- dcast(combined_data_melted, subject + activity ~ variable, mean)
   
   write.table(combined_data_mean, "tidy.txt", quote = FALSE,row.names = FALSE)  
+  }
